@@ -4,6 +4,7 @@ const User = require('../models/user');
 const auth = require('../config/auth');
 
 const router = express.Router();
+// sign-up --------------------------------------------
 
 router.get('/sign-up', async (req, res) => {
   res.render('auth/sign-up.ejs');
@@ -35,5 +36,42 @@ router.post('/sign-up', async (req, res) => {
   // respond back to the browser
   res.send(`Thanks for signing up ${newUser.username}`);
 });
+
+//sign-in -------------------------------------------------
+router.get('/sign-in', async(req, res) =>{
+    res.render('auth/sign-in.ejs')
+}); 
+
+router.post('/sign-in', async(req, res) =>{
+  const username = req.body.username;
+  const password = req.body.password;
+//find a user from the username they filled out
+const user = await User.findOne({ username});
+
+ //if the user doesnt exist, send an error message
+if(!user){
+  return res.send('Login failed, please try again');
+}
+
+ //compare entered password with db password 
+const validPassword = auth.comparePassword(password, user.password)
+
+if(!validPassword){
+  return res.send('Login failed, please try again');
+}
+// else sign them in 
+req.session.user = {
+  username: user.username,
+};
+// create a session cookie 
+res.redirect("/");
+
+}); 
+
+router.get("/sign-out", (req, res) => {
+  req.session.destroy();
+  res.redirect("/");
+});
+
 
 module.exports = router;

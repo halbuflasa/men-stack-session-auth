@@ -5,6 +5,11 @@ function encryptPassword(password){
 
 }
 
+function comparePassword(password, hasPassword){
+    return bcrypt.compareSync(password, hasPassword);
+}
+
 module.exports ={
     encryptPassword,
+    comparePassword
 };
