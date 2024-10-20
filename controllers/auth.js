@@ -35,6 +35,7 @@ router.post('/sign-up', async (req, res) => {
   const newUser = await User.create(payload);
   // respond back to the browser
   res.send(`Thanks for signing up ${newUser.username}`);
+  
 });
 
 //sign-in -------------------------------------------------
@@ -63,14 +64,19 @@ if(!validPassword){
 req.session.user = {
   username: user.username,
 };
+
+
 // create a session cookie 
-res.redirect("/");
+req.session.save(() => {
+  res.redirect("/");
+});
 
 }); 
 
 router.get("/sign-out", (req, res) => {
-  req.session.destroy();
-  res.redirect("/");
+  req.session.destroy(() => {
+    res.redirect("/");
+  });
 });
 
 

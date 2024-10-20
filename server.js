@@ -3,6 +3,7 @@ const methodOverride = require('method-override');
 const morgan = require('morgan');
 require('dotenv').config();
 require('./config/database');
+const MongoStore = require("connect-mongo");
 //controllers
 const authController = require("./controllers/auth.js");
 const session = require('express-session');
@@ -22,8 +23,12 @@ app.use(
     secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: true,
+    store: MongoStore.create({
+      mongoUrl: process.env.MONGODB_URI,
+    }),
   })
 );
+
 
 //PUBLIC RROUTES 
 app.get('/', async(req, res)=>{
